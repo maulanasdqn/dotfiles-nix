@@ -38,14 +38,14 @@
                 xdg-desktop-portal-wlr
                 xdg-desktop-portal-gtk
             ];
-            gtkUsePortal = true;
+            # gtkUsePortal = true;
         };
     };
 
     # Nix settings, auto cleanup and enable flakes
     nix = {
         settings.auto-optimise-store = true;
-        settings.allowed-users = [ "notus" ];
+        settings.allowed-users = [ "ms" ];
         gc = {
             automatic = true;
             dates = "weekly";
@@ -70,7 +70,7 @@
     };
 
     # Set up locales (timezone and keyboard layout)
-    time.timeZone = "America/Los_Angeles";
+    time.timeZone = "Asia/Jakarta";
     i18n.defaultLocale = "en_US.UTF-8";
     console = {
         font = "Lat2-Terminus16";
@@ -78,11 +78,14 @@
     };
 
     # Set up user and enable sudo
-    users.users.notus = {
+    users.users.ms = {
         isNormalUser = true;
-        extraGroups = [ "input" "wheel" ];
+        extraGroups = [ "input" "wheel" "docker" ];
         shell = pkgs.zsh;
     };
+
+    #enable docker
+    virtualisation.docker.enable = true;
 
     # Set up networking and secure it
     networking = {
@@ -117,7 +120,7 @@
         doas = {
             enable = true;
             extraRules = [{
-                users = [ "notus" ];
+                users = [ "ms" ];
                 keepEnv = true;
                 persist = true;
             }];
@@ -132,11 +135,11 @@
         enable = true;
     };
 
-    hardware.pulseaudio.enable = true;
+    hardware.pulseaudio.enable = false;
     security.rtkit.enable = true;
 
     services.pipewire = {
-        enable = false;
+        enable = true;
         alsa.enable = true;
         alsa.support32Bit = true;
         pulse.enable = true;
@@ -144,7 +147,7 @@
     
     # Disable bluetooth, enable pulseaudio, enable opengl (for Wayland)
     hardware = {
-        bluetooth.enable = false;
+        bluetooth.enable = true;
         opengl = {
             enable = true;
             driSupport = true;

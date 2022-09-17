@@ -43,7 +43,7 @@
                                 useGlobalPkgs = true;
                                 extraSpecialArgs = { inherit inputs; };
                                 # Home manager config (configures programs like firefox, zsh, eww, etc)
-                                users.notus = (./. + "/hosts/${hostname}/user.nix");
+                                users.ms = (./. + "/hosts/${hostname}/user.nix");
                             };
                             nixpkgs.overlays = [
                                 # Add nur overlay for Firefox addons
@@ -59,8 +59,7 @@
             nixosConfigurations = {
                 # Now, defining a new system is can be done in one line
                 #                                Architecture   Hostname
-                laptop = mkSystem inputs.nixpkgs "x86_64-linux" "laptop";
-                desktop = mkSystem inputs.nixpkgs "x86_64-linux" "desktop";
+                laptop = mkSystem inputs.nixpkgs "x86_64-linux" "beast";
             };
     };
 }

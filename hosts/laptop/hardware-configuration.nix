@@ -4,42 +4,43 @@
 { config, lib, pkgs, modulesPath, ... }:
 
 {
-    imports =
-      [ (modulesPath + "/installer/scan/not-detected.nix")
+  imports =
+    [ (modulesPath + "/installer/scan/not-detected.nix")
+    ];
+
+  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "usbhid" "sd_mod" "rtsx_pci_sdmmc" ];
+  boot.blacklistedKernelModules = [ "nouveau" "nvidia" ];
+  boot.initrd.kernelModules = [ ];
+  boot.kernelModules = [ "kvm-intel" ];
+  boot.extraModulePackages = [ ];
+
+  fileSystems."/" =
+    { device = "/dev/disk/by-uuid/446523b0-44f7-4f30-855b-7baa691a5362";
+      fsType = "xfs";
+    };
+
+  fileSystems."/boot" =
+    { device = "/dev/disk/by-uuid/9017-C302";
+      fsType = "vfat";
+    };
+
+  swapDevices =
+    [ { device = "/dev/disk/by-uuid/59e01be9-c9ef-473e-aa79-15c96f1c55c8"; }
+    ];
+
+  powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
+  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+
+  hardware = {
+    bluetooth.enable = true;
+    opengl = {
+      enable = true;
+      extraPackages = with pkgs; [
+        intel-media-driver
+        vaapiIntel
+        vaapiVdpau
+        libvdpau-va-gl
       ];
-
-    boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "nvme" "usb_storage" "sd_mod" ];
-    boot.initrd.kernelModules = [ ];
-    boot.kernelModules = [ "kvm-intel" ];
-    boot.extraModulePackages = [ ];
-
-    fileSystems."/" =
-      { device = "/dev/disk/by-uuid/2481d7aa-ef26-4130-9a7b-50426b0bb338";
-        fsType = "ext4";
-      };
-
-    fileSystems."/nix/store" =
-      { device = "/nix/store";
-        fsType = "none";
-        options = [ "bind" ];
-      };
-
-    fileSystems."/boot" =
-      { device = "/dev/disk/by-uuid/FCD9-6610";
-        fsType = "vfat";
-      };
-
-    swapDevices =
-      [ { device = "/dev/disk/by-uuid/91ea68e2-46a2-4aa2-a95c-53865fb639c6"; }
-      ];
-
-    # Enables DHCP on each ethernet and wireless interface. In case of scripted networking
-    # (the default) this is the recommended approach. When using systemd-networkd it's
-    # still possible to use this option, but it's recommended to use it in conjunction
-    # with explicit per-interface declarations with `networking.interfaces.<interface>.useDHCP`.
-    networking.useDHCP = lib.mkDefault true;
-    # networking.interfaces.wlp3s0.useDHCP = lib.mkDefault true;
-
-    powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
-    hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+    };
+  };
 }
